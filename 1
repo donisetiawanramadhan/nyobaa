@@ -1,0 +1,34 @@
+from telegram import Bot
+import requests
+import re
+import time
+
+# Ganti dengan token bot Telegram Anda
+TOKEN = 'TOKEN_ANDA'
+# Ganti dengan ID saluran atau grup Telegram Anda
+CHAT_ID = 'ID_SALURAN_ATAU_GRUP_ANDA'
+# URL situs web yang memunculkan angka
+URL = 'URL_SITUS_WEB'
+
+bot = Bot(TOKEN)
+
+def send_message(message):
+    bot.send_message(chat_id=CHAT_ID, text=message)
+
+def get_number():
+    try:
+        response = requests.get(URL)
+        # Gunakan ekspresi reguler untuk menemukan angka dalam teks HTML
+        number = re.findall(r'\d+', response.text)
+        if number:
+            send_message(f'Angka terbaru: {number[0]}')
+        else:
+            send_message('Tidak ada angka yang ditemukan.')
+    except Exception as e:
+        send_message(f'Ada masalah dalam mengambil angka: {e}')
+
+if __name__ == '__main__':
+    while True:
+        get_number()
+        # Jeda waktu antara setiap permintaan (dalam detik)
+        time.sleep(60)  # Setiap 1 menit
